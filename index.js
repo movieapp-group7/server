@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-// import todoRouter from './routers/todoRouter.js'
+import movieRouter from './routers/movieRouter.js'
 import userRouter from './routers/userRouter.js'
 
 const port = process.env.PORT 
@@ -9,7 +9,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
-// app.use('/',todoRouter)
+app.use('/movie',movieRouter)
 app.use('/user',userRouter)
 
 app.use((err, req, res, next) => {
