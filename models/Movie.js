@@ -13,6 +13,6 @@ export const selectAllReviews = async () => {
   return await pool.query('select * from reviews')
 }
 
-export const selectReviewsByEmail = async (email) => {
-  return await pool.query('select * from reviews where email=$1',[email])
+export const selectReviewsByUser = async (account_id) => {
+  return await pool.query('select * from reviews where account_id=$1',[account_id])
 }
