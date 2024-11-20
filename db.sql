@@ -23,6 +23,14 @@ CREATE TABLE reviews (
   time TIMESTAMP NOT NULL
 );
 
+CREATE TABLE favorites (
+  id SERIAL PRIMARY KEY,
+  account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,
+  movie_id INTEGER NOT NULL,
+  UNIQUE(account_id, movie_id)
+);
+
+
 
 --group tables start
 drop table if exists GroupMembers;
