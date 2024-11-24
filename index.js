@@ -11,6 +11,9 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 app.use('/movie',movieRouter)
 app.use('/user',userRouter)
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -18,4 +21,6 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(port)
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
