@@ -107,3 +107,25 @@ export const getGroupDetails = async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 };
+
+// Get groups by user ID (fetch groups created by a specific user)
+export const getGroupsByUserId = async (req, res) => {
+    const { user_id } = req.params; // Get user_id from URL params
+    
+    // Log incoming request
+    console.log('Fetching groups for user ID:', user_id);
+    
+    try {
+        const result = await pool.query('SELECT * FROM Groups WHERE created_by = $1', [user_id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'No groups found for this user' });
+        }
+        
+        console.log('Groups fetched successfully:', result.rows);
+        res.status(200).json({ success: true, groups: result.rows });
+    } catch (err) {
+        console.error('Error fetching groups for user:', err.message);
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
