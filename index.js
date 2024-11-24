@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import movieRouter from './routers/movieRouter.js'
 import userRouter from './routers/userRouter.js'
+import groupsRouter from './routers/groupRouter.js'
 
 const port = process.env.PORT 
 
@@ -9,8 +10,14 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+
+//routes
 app.use('/movie',movieRouter)
 app.use('/user',userRouter)
+app.use('/groups', groupsRouter)
+
+
+//test
 app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
@@ -22,5 +29,6 @@ app.use((err, req, res, next) => {
 
 
 app.listen(port, () => {
+  //test
   console.log(`Server is running on port ${port}`);
 });
