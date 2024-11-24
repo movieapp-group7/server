@@ -10,7 +10,7 @@ dotenv.config()
 
 const postRegistration = async (req, res, next) => {
   try {
-    console.log("Registration Request Body:", req.body); // Log the incoming data for debugging
+    console.log("Registration Request Body:", req.body); // Log the incoming data 
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -27,7 +27,7 @@ const postRegistration = async (req, res, next) => {
 
     res.status(201).json({ message: 'User registered successfully', user: result.rows[0] });
   } catch (error) {
-    console.error("Error during registration:", error.stack); // Log the error stack for debugging
+    console.error("Error during registration:", error.stack); // Log the error stack 
     next(error); // Pass the error to the error handling middleware
   }
 };
