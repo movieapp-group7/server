@@ -47,4 +47,95 @@ const postLogin = async(req,res,next) => {
   }
 }
 
-export {postRegistration, postLogin}
+const getShareInfo = async (req, res,next) => {
+  const { accountId } = req.params;
+
+  try {
+    const result = await selectShareInfoByUser(accountId);
+  
+    // if no url, generate url, then get share_url, is_public
+    if (!result.rows[0].share_url) {
+    const generateResult = await createShareUrl(accountId);
+    result.rows[0].share_url=generateResult.rows[0].share_url
+    res.status(200).json(result.rows[0])
+    }
+
+    //if url, get share_url, is_public directly
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching or generating share info:', error);
+    next(error); 
+  }
+};
+
+// seperate test:
+/*const postNewShareUrl = async (req, res) => {
+  const { accountId } = req.params;
+
+  try {
+    const newShareUrl = await generateShareUrl(accountId);
+    res.status(201).json({ shareUrl: newShareUrl });
+  } catch (error) {
+    console.error('Error generating new share URL:', error);
+    res.status(500).json({ error: 'Failed to generate share URL' });
+  }
+};
+
+const getShareUrl = async (req, res) => {
+  const { accountId } = req.params;
+
+  try {
+    const result = await selectShareInfoByUser(accountId);
+    const { share_url: shareUrl, is_public: isPublic } = result;
+
+    if (!shareUrl) {
+      return res.status(404).json({ error: 'No share URL found. Consider generating one.' });
+    }
+
+    res.status(200).json({ shareUrl, isPublic });
+  } catch (error) {
+    console.error('Error fetching share URL:', error);
+    res.status(500).json({ error: 'Failed to fetch share URL' });
+  }
+};*/
+
+const putShareVisibility = async (req, res) => {
+  const { accountId } = req.params;
+  const { isPublic } = req.body; 
+
+  try {
+    await toggleShareVisibility(accountId, isPublic);
+    res.status(200).json({ message: `Share visibility updated to ${isPublic ? 'public' : 'private'}` });
+  } catch (error) {
+    console.error('Error updating share visibility:', error);
+    res.status(500).json({ error: 'Failed to update share visibility' });
+  }
+};
+
+const getFavoritesByShareUrl = async (req, res) => {
+  const { shareUrl } = req.params;
+
+  try {
+    const userResult = await selectShareInfoByUrl(shareUrl);
+
+    if (userResult.rowCount === 0) {
+      return res.status(404).json({ error: 'Share URL not found' });
+    }
+
+    const user = userResult.rows[0];
+
+    // check public
+    if (!user.is_public) {
+      return res.status(403).json({ error: 'This profile is private' });
+    }
+
+    // get favorite list
+    const favoritesResult = await selectFavoritesByUser(user.id);
+    res.status(200).json({ accountId: user.id, email: user.email, favorites: favoritesResult.rows });
+  } catch (error) {
+    console.error('Error fetching favorites by share URL:', error);
+    res.status(500).json({ error: 'Failed to fetch favorites' });
+  }
+};
+
+export {postRegistration, postLogin,getShareInfo,putShareVisibility,getFavoritesByShareUrl}

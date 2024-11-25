@@ -9,6 +9,8 @@ username varchar(20),
 email varchar(50) unique not null,
 password varchar(255) not null);
 
+ALTER TABLE account ADD COLUMN share_url VARCHAR(255) UNIQUE;
+ALTER TABLE account ADD COLUMN is_public BOOLEAN DEFAULT TRUE;
 
 
 drop table if exists reviews;
