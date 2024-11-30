@@ -1,7 +1,7 @@
 import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 const {sign} = jwt
-import { insertUser, selectUserByEmail } from '../models/User.js'
+import { insertUser, selectUserByEmail, deleteUserById } from '../models/User.js'
 import { ApiError } from '../helpers/ApiError.js'
 import dotenv from 'dotenv';
 
@@ -27,6 +27,7 @@ const createUserObject = (id,username,email,token=undefined) => {
     'id': id,
     'username': username,
     'email': email,
+
     ...(token !== undefined) && {'token':token}
   }
 }
@@ -47,4 +48,21 @@ const postLogin = async(req,res,next) => {
   }
 }
 
-export {postRegistration, postLogin}
+
+const deleteUser = async (req, res, next) => {
+  try {
+    if (!req.body.id) return next(new ApiError('Invalid ID provided for deletion', 400));
+
+    const userFromDb = await deleteUserById(req.body.id);
+    if (userFromDb.rowCount === 0)
+      return next(new ApiError('User not found or already deleted', 404));
+
+    return res.status(200).json({ message: 'User account successfully deleted' });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+
+
+export {postRegistration, postLogin, deleteUser}

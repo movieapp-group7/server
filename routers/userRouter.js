@@ -1,7 +1,7 @@
 import { pool } from '../helpers/db.js'
 import { Router } from "express"
 import dotenv from 'dotenv';
-import { postLogin, postRegistration } from '../controllers/UserController.js'
+import { postLogin, postRegistration, deleteUser } from '../controllers/UserController.js'
 
 dotenv.config()
 
@@ -10,6 +10,7 @@ const router = Router()
 
 router.post('/register', postRegistration);
 router.post('/login', postLogin);
+router.delete('/delete', deleteUser);
 
 // router.post('/register',(req,res,next) => {
 //   hash(req.body.password,10,(error,hashedPassword) =>{
