@@ -1,7 +1,7 @@
 import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 const {sign} = jwt
-import { insertUser, selectUserByEmail } from '../models/User.js'
+import { insertUser, selectUserByEmail,selectReviewsByUser,createShareUrl,selectShareInfoByUser,selectShareInfoByUrl,toggleShareVisibility,selectFavoritesByUser,selectAllPublicShares} from '../models/User.js'
 import { ApiError } from '../helpers/ApiError.js'
 import dotenv from 'dotenv';
 
@@ -46,6 +46,17 @@ const postLogin = async(req,res,next) => {
     return next(error)
   }
 }
+
+const getReviewsByUser = async (req, res, next) => {
+  const { accountId } = req.params;
+  try {
+    const result = await selectReviewsByUser(accountId);
+    res.status(200).json(result.rows);  
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    next(error);
+  }
+};
 
 const getShareInfo = async (req, res,next) => {
   const { accountId } = req.params;
@@ -138,4 +149,16 @@ const getFavoritesByShareUrl = async (req, res) => {
   }
 };
 
-export {postRegistration, postLogin,getShareInfo,putShareVisibility,getFavoritesByShareUrl}
+
+const getAllPublicShares = async (req, res) => {
+  try {
+    const publicShares = await selectAllPublicShares(); 
+    res.status(200).json(publicShares);
+  } catch (error) {
+    console.error('Error fetching public shares:', error);
+    res.status(500).json({ error: 'Failed to fetch public shares' });
+  }
+};
+
+
+export {postRegistration, postLogin,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares}

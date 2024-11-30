@@ -1,7 +1,7 @@
 import { pool } from '../helpers/db.js'
 import { Router } from "express"
 import dotenv from 'dotenv';
-import { postLogin, postRegistration,getShareInfo,putShareVisibility,getFavoritesByShareUrl } from '../controllers/UserController.js'
+import { postLogin, postRegistration,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares } from '../controllers/UserController.js'
 
 dotenv.config()
 
@@ -11,8 +11,12 @@ const router = Router()
 router.post('/register', postRegistration);
 router.post('/login', postLogin);
 
+//Reviews
+router.get('/:accountId/reviews', getReviewsByUser);
+
 //share section
 // router.post('/share/:accountId/new', postNewShareUrl);
+router.get('/shares', getAllPublicShares);
 router.get('/share/:accountId', getShareInfo);
 router.put('/share/:accountId/visibility', putShareVisibility);
 router.get('/share/public/:shareUrl', getFavoritesByShareUrl);

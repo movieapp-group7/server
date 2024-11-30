@@ -7,6 +7,10 @@ export const selectUserByEmail = async (email) => {
   return await pool.query('select * from account where email=$1',[email])
 }
 
+export const selectReviewsByUser = async (accountId) => {
+  return await pool.query('select * from reviews where account_id=$1',[accountId])
+}
+
 // share favorite
 export const createShareUrl = async (accountId) => {
   const hashedShareUrl = crypto.randomBytes(8).toString('hex'); 
@@ -41,5 +45,11 @@ export const toggleShareVisibility = async (accountId, isPublic) => {
   return await pool.query(
     `UPDATE account SET is_public = $1 WHERE id = $2`,
     [isPublic, accountId]
+  );
+};
+
+export const selectAllPublicShares = async () => {
+  return await pool.query(
+    `SELECT email, share_url FROM account WHERE is_public = true AND share_url IS NOT NULL ORDER BY id`
   );
 };
