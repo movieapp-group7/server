@@ -5,10 +5,12 @@ drop table if exists account;
 
 create table account(
 id serial primary key,
-username varchar(20) not null,
+username varchar(20),
 email varchar(50) unique not null,
 password varchar(255) not null);
 
+ALTER TABLE account ADD COLUMN share_url VARCHAR(255) UNIQUE;
+ALTER TABLE account ADD COLUMN is_public BOOLEAN DEFAULT TRUE;
 
 
 drop table if exists reviews;
@@ -22,3 +24,38 @@ CREATE TABLE reviews (
   rating DECIMAL(2, 1),
   time TIMESTAMP NOT NULL
 );
+
+CREATE TABLE favorites (
+  id SERIAL PRIMARY KEY,
+  account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,
+  movie_id INTEGER NOT NULL,
+  UNIQUE(account_id, movie_id)
+);
+
+
+
+--group tables start
+drop table if exists GroupMembers;
+
+CREATE TABLE GroupMembers (
+    id SERIAL PRIMARY KEY,
+    group_id INT NOT NULL REFERENCES Groups(id) ON DELETE CASCADE,
+    user_id INT NOT NULL REFERENCES account(id) ON DELETE CASCADE,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (group_id, user_id) -- Prevents duplicate memberships in the same group
+);
+
+
+
+drop table if exists Groups;
+
+CREATE TABLE Groups (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_by INT NOT NULL REFERENCES account(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- group tables end
