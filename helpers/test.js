@@ -12,13 +12,18 @@ const { sign } = jwt;
 
 
 //for testing insert user
-const insertTestUser = (username,email, password) => {
-    hash(password, 10, (error, hashedPassword) => {
-        pool.query('INSERT INTO account (username, email, password) VALUES ($1, $2, $3)',
-            [username,email,hashedPassword])
-        
-    })
-}
+const insertTestUser = async (username, email, password) => {
+    const hashedPassword = await hash(password, 10);
+    try {
+        await pool.query('INSERT INTO account (username, email, password) VALUES ($1, $2, $3)', [username, email, hashedPassword]);
+    } catch (error) {
+        if (error.code === '23505') { 
+            console.log(`User with email ${email} already exists. Skipping insertion.`);
+        } else {
+            throw error; 
+        }
+    }
+};
 
 
 //for testing token
