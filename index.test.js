@@ -58,3 +58,47 @@ describe('POST login', () => {
         expect(data).to.include.all.keys('id', 'email', 'token');
     })
 })
+
+
+
+
+describe('POST logout', () => {
+    const username = 'logoutUser';
+    const email = 'logout@foo.com';
+    const password = 'logout123';
+    let token; 
+
+    before(async () => {
+        
+        await pool.query('DELETE FROM account WHERE email = $1', [email]);
+        await insertTestUser(username, email, password);
+
+     
+        const response = await fetch(baseUrl + '/user/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        token = data.token; 
+    });
+
+    it('should log out successfully', async () => {
+        const response = await fetch(baseUrl + '/user/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+
+        expect(response.status).to.equal(200);
+        expect(data).to.be.an('object');
+        expect(data.message).to.equal('Successfully logged out');
+    });
+});
