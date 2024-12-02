@@ -35,26 +35,23 @@ CREATE TABLE favorites (
 
 
 --group tables start
-drop table if exists GroupMembers;
-
-CREATE TABLE GroupMembers (
-    id SERIAL PRIMARY KEY,
-    group_id INT NOT NULL REFERENCES Groups(id) ON DELETE CASCADE,
-    user_id INT NOT NULL REFERENCES account(id) ON DELETE CASCADE,
-    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (group_id, user_id) -- Prevents duplicate memberships in the same group
+CREATE TABLE groups (
+  id SERIAL PRIMARY KEY,             
+  name VARCHAR(50) NOT NULL UNIQUE,  
+  owner_id INTEGER REFERENCES account(id) ON DELETE CASCADE, 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
+ALTER TABLE groups
+ADD COLUMN picture VARCHAR(255);
 
 
-
-drop table if exists Groups;
-
-CREATE TABLE Groups (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    created_by INT NOT NULL REFERENCES account(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE groupmembers (
+  id SERIAL PRIMARY KEY,
+  group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE, 
+  account_id INTEGER REFERENCES account(id) ON DELETE CASCADE, 
+  is_owner BOOLEAN DEFAULT FALSE, 
+  is_approved BOOLEAN DEFAULT FALSE, 
+  UNIQUE(group_id, account_id) 
 );
 
 
