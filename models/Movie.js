@@ -6,8 +6,8 @@ export const insertReview = async (movieId, accountId, email, rating,comment) =>
   return await pool.query("INSERT INTO reviews (movie_id, account_id, email, rating, comment, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [movieId, accountId, email, rating,comment,time])
 }
 
-export const selectReviewsByMovie = async (movie_id) => {
-  return await pool.query('select * from reviews where movie_id=$1 order by time DESC',[movie_id])
+export const selectReviewsByMovie = async (movieId) => {
+  return await pool.query('select * from reviews where movie_id=$1 order by time DESC',[movieId])
 }
 
 export const selectAllReviews = async () => {

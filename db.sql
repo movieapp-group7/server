@@ -39,7 +39,8 @@ CREATE TABLE groups (
   id SERIAL PRIMARY KEY,             
   name VARCHAR(50) NOT NULL UNIQUE,  
   owner_id INTEGER REFERENCES account(id) ON DELETE CASCADE, 
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+  description TEXT
 );
 ALTER TABLE groups
 ADD COLUMN picture VARCHAR(255);
@@ -49,10 +50,33 @@ CREATE TABLE groupmembers (
   id SERIAL PRIMARY KEY,
   group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE, 
   account_id INTEGER REFERENCES account(id) ON DELETE CASCADE, 
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   is_owner BOOLEAN DEFAULT FALSE, 
   is_approved BOOLEAN DEFAULT FALSE, 
   UNIQUE(group_id, account_id) 
 );
 
+
+CREATE TABLE groupcustom (
+  id SERIAL PRIMARY KEY,                          
+  group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,                         
+  added_by INTEGER REFERENCES account(id) ON DELETE CASCADE,                         
+  content_type VARCHAR(20) NOT NULL,                  
+  content_id INTEGER NOT NULL,                        
+  description TEXT,                                   
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE groupshowtimes (
+  id SERIAL PRIMARY KEY,                          
+  group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,                          
+  added_by INTEGER REFERENCES account(id) ON DELETE CASCADE,                         
+  movie_title VARCHAR(255) NOT NULL,
+  show_time TIMESTAMP NOT NULL,
+  theatre VARCHAR(255) NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  
+);
 
 -- group tables end
