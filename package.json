@@ -5,8 +5,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "testStart": "cross-env NODE_ENV=test node index.js",
     "devStart": "cross-env NODE_ENV=development nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test mocha *.test.js"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "chai": "^5.1.2",
     "cross-env": "^7.0.3"
   }
 }

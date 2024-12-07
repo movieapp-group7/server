@@ -47,6 +47,22 @@ const postLogin = async(req,res,next) => {
   }
 }
 
+const deleteUser = async (req, res, next) => {
+  try {
+    if (!req.body.id) return next(new ApiError('Invalid ID provided for deletion', 400));
+
+    const userFromDb = await deleteUserById(req.body.id);
+    if (userFromDb.rowCount === 0)
+      return next(new ApiError('User not found or already deleted', 404));
+
+    return res.status(200).json({ message: 'User account successfully deleted' });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+
+
 const getReviewsByUser = async (req, res, next) => {
   const { accountId } = req.params;
   try {
@@ -161,4 +177,4 @@ const getAllPublicShares = async (req, res) => {
 };
 
 
-export {postRegistration, postLogin,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares}
+export {postRegistration, postLogin, deleteUser,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares}
