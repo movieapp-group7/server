@@ -1,7 +1,7 @@
 import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 const {sign} = jwt
-import { insertUser, selectUserByEmail,selectReviewsByUser,createShareUrl,selectShareInfoByUser,selectShareInfoByUrl,toggleShareVisibility,selectFavoritesByUser,selectAllPublicShares} from '../models/User.js'
+import { insertUser, selectUserByEmail,deleteUserById,selectReviewsByUser,createShareUrl,selectShareInfoByUser,selectShareInfoByUrl,toggleShareVisibility,selectFavoritesByUser,selectAllPublicShares} from '../models/User.js'
 import { ApiError } from '../helpers/ApiError.js'
 import dotenv from 'dotenv';
 
@@ -9,23 +9,24 @@ dotenv.config()
 
 const postRegistration = async(req,res,next) => {
   try{
-    // if (!req.body.username || req.body.username.length ===0 ) return next (new ApiError('Invalid name for user',400))
+    if (!req.body.username || req.body.username.length ===0 ) return next (new ApiError('Invalid name for user',400))
     if (!req.body.email || req.body.email.length ===0 ) return next (new ApiError('Invalid email for user',400))
     if (!req.body.password || req.body.password.length <8) return next(new ApiError('Invalid password for user',400))
 
     const hashedPassword = await hash(req.body.password,10)
-    const userFromDb = await insertUser(req.body.email,hashedPassword)
+    const userFromDb = await insertUser(req.body.username,req.body.email,hashedPassword)
     const user = userFromDb.rows[0]
-    return res.status(201).json(createUserObject(user.id,user.email))
-  } catch (error){
-    return next(error)
+    
+    return res.status(201).json(createUserObject(user.id, user.username, user.email));
+  } catch (error) {
+    return next(error);
   }
-}
+};
 
-const createUserObject = (id,email,token=undefined) => {
+const createUserObject = (id,username,email,token=undefined) => {
   return {
     'id': id,
-    // 'username': username,
+    'username': username,
     'email': email,
     ...(token !== undefined) && {'token':token}
   }
@@ -41,9 +42,20 @@ const postLogin = async(req,res,next) => {
     if (!await compare(req.body.password,user.password)) return next(new ApiError(invalid_credentials_message))
 
     const token = sign(req.body.email,process.env.JWT_SECRET_KEY)    
-    return res.status(200).json(createUserObject(user.id,user.email,token)) 
+    return res.status(200).json(createUserObject(user.id,user.username,user.email,token)) 
   } catch (error) {
     return next(error)
+  }
+}
+
+const signOut = (req, res) => {
+  try {
+      console.log('User logged out successfully.');
+
+      res.status(200).json({ message: 'Successfully logged out' });
+  } catch (error) {
+      console.error('Logout error:', error);
+      res.status(500).json({ message: 'Logout failed', error: error.message });
   }
 }
 
@@ -177,4 +189,4 @@ const getAllPublicShares = async (req, res) => {
 };
 
 
-export {postRegistration, postLogin, deleteUser,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares}
+export {postRegistration, postLogin, deleteUser, signOut, getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares}

@@ -9,13 +9,11 @@ import { expect } from 'chai';
 
 
 describe('POST register', () => {
-    const username = 'loging5';
-    const email = 'loging5@foo.com';
+    const username = 'loging6';
+    const randomNumber = Math.floor(Math.random() * 10);
+    const email = 'loging'+randomNumber+'@foo.com';
     const password = 'loging5foo';
-    //need to delete email if exist from database before testing
-    before(async () => {
-        await pool.query('DELETE FROM account WHERE email = $1', [email]);
-    });
+
     it ('should register with valid email and password', async() => {
         const response = await fetch (baseUrl+ '/user/register' , {
             method: 'POST',
@@ -33,6 +31,9 @@ describe('POST register', () => {
     })
 
 });
+
+  
+  
 
 describe('POST login', () => {
     const username = 'post';
@@ -100,5 +101,38 @@ describe('POST logout', () => {
         expect(response.status).to.equal(200);
         expect(data).to.be.an('object');
         expect(data.message).to.equal('Successfully logged out');
+    });
+});
+
+describe('DELETE /user/delete', () => {
+    let userId;
+
+    // Insert a test user before the tests
+    before(async () => {
+        const username = 'testUser';
+        const email = 'testuser@foo.com';
+        const password = 'testpassword123';
+
+        // Insert the test user and capture the `id`
+        const result = await insertTestUser(username, email, password);
+        userId = result.rows[0].id; // Ensure this is correctly returned
+    });
+
+    it('should delete a user successfully with a valid ID', async () => {
+        // Make the DELETE request with the user's ID
+        const response = await fetch(baseUrl + '/user/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: userId }), // Include the `id` in the request body
+        });
+
+        const data = await response.json();
+
+        // Assertions
+        expect(response.status).to.equal(200);
+        expect(data).to.be.an('object');
+        expect(data.message).to.equal('User account successfully deleted');
     });
 });

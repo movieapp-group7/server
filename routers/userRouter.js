@@ -1,7 +1,7 @@
 import { pool } from '../helpers/db.js'
 import { Router } from "express"
 import dotenv from 'dotenv';
-import { postLogin, postRegistration,deleteUser,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares } from '../controllers/UserController.js'
+import { postLogin, postRegistration,deleteUser,signOut,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares } from '../controllers/UserController.js'
 
 dotenv.config()
 
@@ -10,6 +10,8 @@ const router = Router()
 
 router.post('/register', postRegistration);
 router.post('/login', postLogin);
+router.post('/logout', signOut);
+
 router.delete('/delete', deleteUser);
 
 //Reviews

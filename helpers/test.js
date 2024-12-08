@@ -15,15 +15,20 @@ const { sign } = jwt;
 const insertTestUser = async (username, email, password) => {
     const hashedPassword = await hash(password, 10);
     try {
-        await pool.query('INSERT INTO account (username, email, password) VALUES ($1, $2, $3)', [username, email, hashedPassword]);
+      const result = await pool.query(
+        'INSERT INTO account (username, email, password) VALUES ($1, $2, $3) RETURNING *',
+        [username, email, hashedPassword]
+      );
+      return result; // Return the result of the query
     } catch (error) {
-        if (error.code === '23505') { 
-            console.log(`User with email ${email} already exists. Skipping insertion.`);
-        } else {
-            throw error; 
-        }
+      if (error.code === '23505') { 
+        console.log(`User with email ${email} already exists. Skipping insertion.`);
+      } else {
+        throw error;
+      }
     }
-};
+  };
+  
 
 
 //for testing token
