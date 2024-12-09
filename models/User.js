@@ -61,31 +61,8 @@ export const selectAllPublicShares = async () => {
 };
 
 
-
-const deleteReviewsByAccountId = async (id) => {
-  return await pool.query('DELETE FROM reviews WHERE account_id=$1', [id]);
-};
-
-
-
-
 export const deleteUserById = async (id) => {
-
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    await deleteReviewsByAccountId(id); 
-
-    const result = await client.query('DELETE FROM account WHERE id=$1', [id]); 
-    await client.query('COMMIT');
-    return result;
-
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
-  }
+  return await pool.query('DELETE FROM account WHERE id=$1', [id]); 
 };
 
 export const updateUserAvatar = async(fileBuffer, accountId) =>{

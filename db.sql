@@ -18,7 +18,7 @@ ADD COLUMN country VARCHAR(100) DEFAULT NULL,
 ADD COLUMN gender gender_type DEFAULT NULL,
 ADD COLUMN birthday DATE DEFAULT NULL;
 
--------------------------------------------------
+-----------------------------------------------------
 
 --reviews
 drop table if exists reviews;
@@ -32,6 +32,14 @@ CREATE TABLE reviews (
   rating DECIMAL(2, 1),
   time TIMESTAMP NOT NULL
 );
+ALTER TABLE reviews DROP COLUMN email;
+ALTER TABLE reviews DROP CONSTRAINT reviews_account_id_fkey;
+ALTER TABLE reviews
+ADD CONSTRAINT reviews_account_id_fkey
+FOREIGN KEY (account_id)
+REFERENCES account (id)
+ON DELETE CASCADE;
+
 ----------------------------------------------------
 
 --favorite
@@ -41,6 +49,7 @@ CREATE TABLE favorites (
   movie_id INTEGER NOT NULL,
   UNIQUE(account_id, movie_id)
 );
+
 -------------------------------------------------
 
 
@@ -87,4 +96,5 @@ CREATE TABLE groupshowtimes (
   description TEXT,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP 
 );
+
 --------------------------------------------------
