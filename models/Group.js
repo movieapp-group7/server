@@ -147,3 +147,16 @@ export const selectShowtimeContentByGroup = async(groupId) => {
     ORDER BY created_at DESC`,[groupId]
   );
 }
+
+export const updateGroupImage = async(fileBuffer, groupId) =>{
+  return await pool.query(
+    `UPDATE groups SET image = $1 WHERE id = $2`,
+    [fileBuffer, groupId]
+  );
+}
+
+export const selectGroupImage = async(groupId) => {
+  return await pool.query(
+    'SELECT image FROM groups WHERE id = $1', [groupId]
+  );
+}

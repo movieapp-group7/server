@@ -1,7 +1,7 @@
 import {pool} from '../helpers/db.js'
 import multer from 'multer';
 
-import { getAllGroups,addGroup,isGroupOwner,isGroupMember,addMember,approveMember,selectGroupMembers, rejectMember, selectGroupById,selectJoinRequests, deleteGroup,deleteMember,updateGroupInfo,selectUserGroups,insertContentToGroup,selectContentByGroup,insertShowtimeToGroup,selectShowtimeContentByGroup } from '../models/Group.js';
+import { getAllGroups,addGroup,isGroupOwner,isGroupMember,addMember,approveMember,selectGroupMembers, rejectMember, selectGroupById,selectJoinRequests, deleteGroup,deleteMember,updateGroupInfo,selectUserGroups,insertContentToGroup,selectContentByGroup,insertShowtimeToGroup,selectShowtimeContentByGroup,updateGroupImage,selectGroupImage } from '../models/Group.js';
 
 
 const getGroups = async (req, res) => {
@@ -224,36 +224,42 @@ const editGroupDetails = async (req, res) => {
 
 
 // Setup multer for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // You can choose your directory here
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Upload group image
 const uploadGroupImage = async (req, res) => {
   const { groupId } = req.params;
+  const fileBuffer = req.file.buffer; 
 
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  const imageUrl = `/uploads/${req.file.filename}`; // Adjust the URL as needed for serving
-
   try {
-    await pool.query(
-      `UPDATE groups SET picture = $1 WHERE id = $2`,
-      [imageUrl, groupId]
-    );
-
-    res.status(200).json({ message: 'Group image updated successfully' });
+    await updateGroupImage(fileBuffer, groupId)
+    const base64Image = `data:image/jpeg;base64,${fileBuffer.toString('base64')}`;
+    res.status(200).json(base64Image);
   } catch (error) {
     console.error('Error updating group image:', error);
     res.status(500).json({ error: 'Failed to update group image' });
+  }
+};
+
+const getGroupImage = async (req, res) => {
+  const { groupId } = req.params;
+
+  try {
+    const result = await selectGroupImage(groupId);
+    if (result.rows.length > 0 && result.rows[0].image) {
+      const imageBuffer = result.rows[0].image;
+      const base64Image = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+      res.status(200).json({ base64Image });
+    } else {
+      res.status(404).send('Image not found.');
+    }
+  } catch (error) {
+    console.error('Error fetching image:', error);
+    res.status(500).send('Failed to fetch image.');
   }
 };
 
@@ -263,7 +269,6 @@ const leaveGroup = async (req, res) => {
     return res.status(400).json({ message: "User ID is required" });
 }
   try {
-      // 检查用户是否属于该组
       // const { rowCount } = await pool.query(
       //     "SELECT * FROM GroupMembers WHERE group_id = $1 AND user_id = $2",
       //     [groupId, userId]
@@ -273,7 +278,6 @@ const leaveGroup = async (req, res) => {
       //     return res.status(400).json({ message: "You are not a member of this group" });
       // }
 
-      // 删除用户与组的关联
       await pool.query(
           "DELETE FROM groupmembers WHERE group_id = $1 AND account_id = $2",
           [groupId, userId]
@@ -356,7 +360,7 @@ const getGroupShowtimesContent = async (req, res) => {
   }
 };
 
-export {getGroups, createGroup, removeGroup, requestToJoin,getJoinRequests, manageRequest,getGroupDetails,removeMember,editGroupDetails,uploadGroupImage,leaveGroup,getUserGroups,addContentToGroup,getGroupContent,addShowtimeToGroup,getGroupShowtimesContent}
+export {getGroups, createGroup, removeGroup, requestToJoin,getJoinRequests, manageRequest,getGroupDetails,removeMember,editGroupDetails,uploadGroupImage,leaveGroup,getUserGroups,addContentToGroup,getGroupContent,addShowtimeToGroup,getGroupShowtimesContent,upload,uploadGroupImage,getGroupImage}
 
 // import { pool } from '../helpers/db.js'; // Import pool from db.js
 

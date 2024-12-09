@@ -1,7 +1,7 @@
 import { pool } from '../helpers/db.js'
 import { Router } from "express"
 import dotenv from 'dotenv';
-import { postLogin, postRegistration,deleteUser,signOut,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares } from '../controllers/UserController.js'
+import { postLogin, postRegistration,deleteUser,signOut,getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares,getAccountInfo,getUserAvart,uploadUserAvatar,upload,editAccountInfo } from '../controllers/UserController.js'
 
 dotenv.config()
 
@@ -13,6 +13,10 @@ router.post('/login', postLogin);
 router.post('/logout', signOut);
 
 router.delete('/delete', deleteUser);
+router.patch('/:accountId/editaccount', editAccountInfo);
+router.get('/:accountId/account',getAccountInfo)
+router.get('/:accountId/avatar',getUserAvart)
+router.post('/:accountId/uploadavatar', upload.single('image'), uploadUserAvatar);
 
 //Reviews
 router.get('/:accountId/reviews', getReviewsByUser);

@@ -1,9 +1,7 @@
 import { Router } from "express"
-import {getGroups,createGroup, removeGroup, requestToJoin, getJoinRequests, manageRequest,getGroupDetails, removeMember, editGroupDetails,uploadGroupImage,leaveGroup,getUserGroups,addContentToGroup,getGroupContent,addShowtimeToGroup,getGroupShowtimesContent} from '../controllers/GroupController.js'
-import multer from 'multer';
+import {getGroups,createGroup, removeGroup, requestToJoin, getJoinRequests, manageRequest,getGroupDetails, removeMember, editGroupDetails,uploadGroupImage,leaveGroup,getUserGroups,addContentToGroup,getGroupContent,addShowtimeToGroup,getGroupShowtimesContent, getGroupImage, upload} from '../controllers/GroupController.js'
 
 const router = Router()
-const upload = multer({ dest: 'uploads/' });
 
 router.get('/', getGroups);
 router.post('/newgroup', createGroup);
@@ -21,6 +19,8 @@ router.get('/:groupId/movies',getGroupContent)
 router.post('/:groupId/addshowtime',addShowtimeToGroup)
 router.get('/:groupId/showtimes',getGroupShowtimesContent)
 router.post('/:groupId/uploadimage', upload.single('image'), uploadGroupImage);
+router.get('/:groupId/image',getGroupImage)
+
 
 
 export default router;
