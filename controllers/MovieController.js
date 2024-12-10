@@ -1,12 +1,12 @@
 import { insertReview, selectAllReviews, selectReviewsByMovie, selectAverageRatingByMovie,insertFavorite,checkFavorite,deleteFavorite,selectFavoritesByUser} from '../models/Movie.js'
 
 const postNewReview = async (req, res) => {
-  const { movieId, accountId, email, rating, comment } = req.body;
+  const { movieId, accountId, rating, comment } = req.body;
   try {
     if (rating=="" || comment == "") {
       return res.status(400).send("newReview is required");
     }
-    const newReview = await insertReview(movieId, accountId, email, rating, comment);
+    const newReview = await insertReview(movieId, accountId, rating, comment);
     res.status(201).json(newReview);
   } catch (err) {
     res.status(500).json({ error: err.message });

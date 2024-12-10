@@ -23,6 +23,13 @@ export const selectGroupById = async(groupId) => {
     WHERE g.id = $1`, [groupId]);
 }
 
+export const insertJoinRequest =async(groupId,accountId)=>{
+  return await pool.query(
+    `INSERT INTO groupmembers (group_id, account_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+    [groupId, accountId]
+  );
+}
+
 // check if a user is the owner of the group
 export const isGroupOwner = async (groupId, userId) => {
   const result = await pool.query(
