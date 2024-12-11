@@ -1,13 +1,13 @@
 import {pool} from '../helpers/db.js'
 
 //review section
-export const insertReview = async (movieId, accountId, email, rating,comment) => {
+export const insertReview = async (movieId, accountId, rating,comment) => {
   const time = new Date().toISOString();
-  return await pool.query("INSERT INTO reviews (movie_id, account_id, email, rating, comment, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [movieId, accountId, email, rating,comment,time])
+  return await pool.query("INSERT INTO reviews (movie_id, account_id, rating, comment, time) VALUES ($1, $2, $3, $4, $5) RETURNING *", [movieId, accountId,  rating,comment,time])
 }
 
 export const selectReviewsByMovie = async (movieId) => {
-  return await pool.query('select * from reviews where movie_id=$1 order by time DESC',[movieId])
+  return await pool.query('select r.*, a.username,a.email from reviews r join account a on r.account_id=a.id where movie_id=$1 order by time DESC',[movieId])
 }
 
 export const selectAllReviews = async () => {
