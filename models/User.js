@@ -86,3 +86,41 @@ export const updateAccountInfo = async (username, country,gender,birthday,accoun
     [username, country,gender,birthday,accountId]
   );
 };
+
+//watchlist
+export const addMovieToWatchlist = async (accountId, movieId, status) => {
+  const query = `
+    INSERT INTO watchlist (account_id, movie_id, status)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (account_id, movie_id) DO UPDATE SET status = $3
+  `;
+  try {
+    return await pool.query(query, [accountId, movieId, status]);
+  } catch (err) {
+    console.error('Database Error:', err); // Log the error
+    throw new Error('Failed to add movie to watchlist'); // Ensure this propagates
+  }
+};
+
+export const getWatchlistByStatus = async (accountId, status) => {
+  const query = `SELECT * FROM watchlist WHERE account_id = $1 AND status = $2`;
+  const result = await pool.query(query, [accountId, status]);
+  return result.rows;
+};
+
+export const updateMovieStatus = async (accountId, movieId, status) => {
+  const query = `
+    UPDATE watchlist 
+    SET status = $3 
+    WHERE account_id = $1 AND movie_id = $2
+  `;
+  return await pool.query(query, [accountId, movieId, status]);
+};
+
+export const removeMovieFromWatchlist = async (accountId, movieId) => {
+  const query = `
+    DELETE FROM watchlist 
+    WHERE account_id = $1 AND movie_id = $2
+  `;
+  return await pool.query(query, [accountId, movieId]);
+};
