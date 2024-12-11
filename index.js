@@ -3,6 +3,7 @@ import cors from 'cors'
 import movieRouter from './routers/movieRouter.js'
 import userRouter from './routers/userRouter.js'
 import groupsRouter from './routers/groupRouter.js'
+import watchlistRouter from './routers/watchlistRouter.js'
 
 const port = process.env.PORT 
 
@@ -15,7 +16,7 @@ app.use(express.urlencoded({extended: false}))
 app.use('/movie',movieRouter)
 app.use('/user',userRouter)
 app.use('/groups', groupsRouter)
-
+app.use('/watch', watchlistRouter)
 
 //test
 app.get('/', (req, res) => {
