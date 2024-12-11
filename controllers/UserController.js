@@ -2,11 +2,73 @@ import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 const {sign} = jwt
 import multer from 'multer';
-import { insertUser, selectUserByEmail,deleteUserById,selectReviewsByUser,createShareUrl,selectShareInfoByUser,selectShareInfoByUrl,toggleShareVisibility,selectFavoritesByUser,selectAllPublicShares,selectUserById,selectAccountAvatarById,updateUserAvatar,updateAccountInfo} from '../models/User.js'
+import { insertUser, selectUserByEmail,deleteUserById,selectReviewsByUser,createShareUrl,selectShareInfoByUser,selectShareInfoByUrl,toggleShareVisibility,selectFavoritesByUser,selectAllPublicShares,selectUserById,selectAccountAvatarById,updateUserAvatar,updateAccountInfo
+  ,addMovieToWatchlist,
+  getWatchlistByStatus,
+  updateMovieStatus,
+  removeMovieFromWatchlist
+} from '../models/User.js'
 import { ApiError } from '../helpers/ApiError.js'
 import dotenv from 'dotenv';
 
 dotenv.config()
+
+
+//watchlist
+const addMovie = async (req, res, next) => {
+  const { accountId, movieId, status } = req.body;
+
+  try {
+    console.log('Adding movie to watchlist', { accountId, movieId, status });
+
+    if (!accountId || !movieId || !status) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    await addMovieToWatchlist(accountId, movieId, status);
+    res.status(201).json({ message: 'Movie added to watchlist' });
+  } catch (err) {
+    console.error('Error adding movie to watchlist:', err);
+    res.status(500).json({ message: 'Failed to add movie to watchlist' });
+    next(err); 
+  }
+};
+
+const getMoviesByStatus = async (req, res, next) => {
+  const { accountId, status } = req.params;
+
+  try {
+    const movies = await getWatchlistByStatus(accountId, status);
+    res.status(200).json(movies);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateMovie = async (req, res, next) => {
+    const { accountId, movieId } = req.params;
+    const { status } = req.body;
+
+
+  try {
+    await updateMovieStatus(accountId, movieId, status);
+    res.status(200).json({ message: 'Movie status updated' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const removeMovie = async (req, res, next) => {
+  const { accountId, movieId } = req.params;
+
+  try {
+    await removeMovieFromWatchlist(accountId, movieId);
+    res.status(200).json({ message: 'Movie removed from watchlist' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 const postRegistration = async(req,res,next) => {
   try{
@@ -254,4 +316,6 @@ const getAllPublicShares = async (req, res) => {
 };
 
 
-export {postRegistration, postLogin, deleteUser, signOut, getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares,getAccountInfo,getUserAvart,uploadUserAvatar,upload,editAccountInfo}
+export {postRegistration, postLogin, deleteUser, signOut, getReviewsByUser,getShareInfo,putShareVisibility,getFavoritesByShareUrl,getAllPublicShares,getAccountInfo,getUserAvart,uploadUserAvatar,upload,editAccountInfo,
+  addMovie, getMoviesByStatus,updateMovie,removeMovie
+}

@@ -354,7 +354,7 @@ const getGroupShowtimesContent = async (req, res) => {
   }
 };
 
-export {getGroups, createGroup, removeGroup, requestToJoin,getJoinRequests, manageRequest,getGroupDetails,removeMember,editGroupDetails,uploadGroupImage,leaveGroup,getUserGroups,addContentToGroup,getGroupContent,addShowtimeToGroup,getGroupShowtimesContent,upload,uploadGroupImage,getGroupImage}
+export {getGroups, createGroup, removeGroup, requestToJoin,getJoinRequests, manageRequest,getGroupDetails,removeMember,editGroupDetails,uploadGroupImage,leaveGroup,getUserGroups,addContentToGroup,getGroupContent,addShowtimeToGroup,getGroupShowtimesContent,upload,/**uploadGroupImage,*/getGroupImage}
 
 // import { pool } from '../helpers/db.js'; // Import pool from db.js
 
