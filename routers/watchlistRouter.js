@@ -7,10 +7,10 @@ import { addMovie, getMoviesByStatus,updateMovie,removeMovie, } from '../control
 const router = Router()
 dotenv.config()
 
-router.post('/watchlist', addMovie); // POST /watchlist (body: accountId, movieId, status)
-router.get('/watchlist/:accountId/:status', getMoviesByStatus); // GET /watchlist/:accountId/:status
-router.put('/watchlist/:accountId/:movieId', updateMovie); // PUT /watchlist/:accountId/:movieId
-router.delete('/watchlist/:accountId/:movieId', removeMovie); // DELETE /watchlist/:accountId/:movieId
+router.post('/watchlist', addMovie); 
+router.get('/watchlist/:accountId/:status', getMoviesByStatus); 
+router.put('/watchlist/:accountId/:movieId', updateMovie); 
+router.delete('/watchlist/:accountId/:movieId', removeMovie); 
 
 
 
