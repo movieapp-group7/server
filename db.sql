@@ -98,3 +98,14 @@ CREATE TABLE groupshowtimes (
 );
 
 --------------------------------------------------
+-- watchlist
+
+DROP TABLE IF EXISTS watchlist;
+
+CREATE TABLE watchlist (
+    id SERIAL PRIMARY KEY,                      
+    account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,
+    movie_id INTEGER NOT NULL,                 
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    UNIQUE(account_id, movie_id)               
+);
