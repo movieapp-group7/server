@@ -109,3 +109,5 @@ CREATE TABLE watchlist (
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     UNIQUE(account_id, movie_id)               
 );
+ALTER TABLE watchlist
+ADD COLUMN status VARCHAR(20) DEFAULT 'to_watch';
