@@ -1,3 +1,4 @@
+
 import pkg from 'pg'
 import dotenv from 'dotenv'
 
@@ -12,11 +13,13 @@ const openDb = () => {
     host: process.env.DB_HOST,
     database: environment === 'development'? process.env.DB_NAME : process.env.TEST_DB_NAME,
     password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT
+    port: process.env.DB_PORT,
+    ssl: { rejectUnauthorized: true }
   })
   return pool
 }
 
 const pool = openDb()
 
-export { pool }
+const query = (text, params) => pool.query(text, params);
+export { query, pool };
