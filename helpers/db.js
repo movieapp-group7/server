@@ -21,5 +21,4 @@ const openDb = () => {
 
 const pool = openDb()
 
-const query = (text, params) => pool.query(text, params);
-export { query, pool };
+export { pool };
