@@ -14,7 +14,7 @@ const openDb = () => {
     database: environment === 'development'? process.env.DB_NAME : process.env.TEST_DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-    ssl: { rejectUnauthorized: true }
+    //ssl: { rejectUnauthorized: true }
   })
   return pool
 }
