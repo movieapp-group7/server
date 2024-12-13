@@ -71,6 +71,9 @@ const removeMovie = async (req, res, next) => {
 
 
 const postRegistration = async(req,res,next) => {
+  //console.log(req.body);
+  //console.log(req.body.username.length);
+  //console.log(req.body.email.length);
   try{
     if (!req.body.username || req.body.username.length ===0 ) return next (new ApiError('Invalid name for user',400))
     if (!req.body.email || req.body.email.length ===0 ) return next (new ApiError('Invalid email for user',400))
@@ -82,7 +85,7 @@ const postRegistration = async(req,res,next) => {
     
     return res.status(201).json(createUserObject(user.id, user.username, user.email));
   } catch (error) {
-    return next(error);
+    return next(new ApiError('Error creating user',500));
   }
 };
 
